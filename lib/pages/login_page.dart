@@ -1,9 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart'; // [BARU] package Firebase Authentication
 import 'package:flutter/material.dart';
 
-// import 'home_page.dart';
+import 'home_page.dart';
 
-// Class MyLogin (Stateful) di file login_page.dart sesuai materi
 class MyLogin extends StatefulWidget {
   const MyLogin({super.key});
 
@@ -12,18 +11,14 @@ class MyLogin extends StatefulWidget {
 }
 
 class _MyLoginState extends State<MyLogin> {
-  // [BARU] Controller untuk menangkap input email & password dari UI
   final emailCtrl = TextEditingController();
   final passCtrl = TextEditingController();
 
-  // [BARU] state loading (spinner di tombol) & pesan error
   bool _isLoading = false;
   String? _error;
 
-  // [TAMBAH] state untuk tombol lihat/sembunyikan password
   bool _obscure = true;
 
-  // [TAMBAH] bersihkan controller agar tidak memory leak
   @override
   void dispose() {
     emailCtrl.dispose();
@@ -31,22 +26,18 @@ class _MyLoginState extends State<MyLogin> {
     super.dispose();
   }
 
-  // [BARU] Fungsi private login ke Firebase (sama seperti materi, ditambah validasi)
   Future<void> _login() async {
-    // [TAMBAH] validasi sederhana: input tidak boleh kosong
     if (emailCtrl.text.trim().isEmpty || passCtrl.text.isEmpty) {
       setState(() => _error = 'Email dan password wajib diisi');
       return;
     }
 
-    // Tampilkan loading & reset error lama
     setState(() {
       _isLoading = true;
       _error = null;
     });
 
     try {
-      // [BARU] Proses login ke Firebase Auth (Email/Password)
       final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: emailCtrl.text.trim(),
         password: passCtrl.text,
@@ -55,39 +46,23 @@ class _MyLoginState extends State<MyLogin> {
 
       if (!mounted) return;
 
-      // Dialog sukses (sesuai materi), setelah OK pindah ke Home
-      await showDialog(
-        context: context,
-        builder: (_) => AlertDialog(
-          title: const Text('Login Success'),
-          content: Text('UID: ${user?.uid}\nEmail: ${user?.email}'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('OK'),
-            ),
-          ],
-        ),
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Login Success: ${user?.email}')),
       );
 
-      if (!mounted) return;
-      // [TAMBAH] pindah ke HomePage dan hapus halaman login dari stack
-      // Navigator.pushReplacement(
-      //   context,
-      //   MaterialPageRoute(builder: (_) => const HomePage()),
-      // );
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const HomePage()),
+      );
     } on FirebaseAuthException catch (e) {
-      // [BARU] error dari Firebase (password salah, user tidak ada, dll)
       setState(() {
         _error = _friendlyError(e);
       });
     } catch (e) {
-      // [BARU] error lain (misal tidak ada internet)
       setState(() {
         _error = e.toString();
       });
     } finally {
-      // [BARU] apapun hasilnya, matikan loading
       if (mounted) {
         setState(() {
           _isLoading = false;
@@ -96,7 +71,6 @@ class _MyLoginState extends State<MyLogin> {
     }
   }
 
-  // [TAMBAH] ubah kode error Firebase jadi pesan yang mudah dibaca
   String _friendlyError(FirebaseAuthException e) {
     switch (e.code) {
       case 'invalid-email':
@@ -115,7 +89,6 @@ class _MyLoginState extends State<MyLogin> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // [UBAH] UI login lebih bagus: gradient + card di tengah
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -149,7 +122,6 @@ class _MyLoginState extends State<MyLogin> {
                       ),
                       const SizedBox(height: 24),
 
-                      // Input email (terhubung ke emailCtrl)
                       TextField(
                         controller: emailCtrl,
                         keyboardType: TextInputType.emailAddress,
@@ -161,7 +133,6 @@ class _MyLoginState extends State<MyLogin> {
                       ),
                       const SizedBox(height: 12),
 
-                      // Input password (terhubung ke passCtrl)
                       TextField(
                         controller: passCtrl,
                         obscureText: _obscure,
@@ -169,7 +140,6 @@ class _MyLoginState extends State<MyLogin> {
                           labelText: 'Password',
                           prefixIcon: const Icon(Icons.lock_outlined),
                           border: const OutlineInputBorder(),
-                          // [TAMBAH] ikon mata untuk toggle password
                           suffixIcon: IconButton(
                             icon: Icon(_obscure
                                 ? Icons.visibility_off
@@ -178,18 +148,16 @@ class _MyLoginState extends State<MyLogin> {
                                 setState(() => _obscure = !_obscure),
                           ),
                         ),
-                        onSubmitted: (_) => _login(), // [TAMBAH] Enter = login
+                        onSubmitted: (_) => _login(), 
                       ),
                       const SizedBox(height: 16),
 
-                      // [BARU] tampilkan pesan error kalau ada
                       if (_error != null) ...[
                         Text(_error!,
                             style: const TextStyle(color: Colors.red)),
                         const SizedBox(height: 8),
                       ],
 
-                      // [BARU] tombol login: dinonaktifkan saat loading
                       SizedBox(
                         width: double.infinity,
                         height: 48,
