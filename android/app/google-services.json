@@ -1,0 +1,67 @@
+{
+  "project_info": {
+    "project_number": "254115562374",
+    "project_id": "projectfb2026-b2569",
+    "storage_bucket": "projectfb2026-b2569.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:254115562374:android:04593db4f2f9d1f6f96207",
+        "android_client_info": {
+          "package_name": "com.contoh.myapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDkYYmS3-Q_BQxNObJrBUFlSXlzNu-lSuw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:254115562374:android:1049d69bfe23acabf96207",
+        "android_client_info": {
+          "package_name": "com.example.pertumuan10"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDkYYmS3-Q_BQxNObJrBUFlSXlzNu-lSuw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:254115562374:android:c86ecc4627b1e136f96207",
+        "android_client_info": {
+          "package_name": "com.example.tugaspertemuan8"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDkYYmS3-Q_BQxNObJrBUFlSXlzNu-lSuw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
