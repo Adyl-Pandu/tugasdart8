@@ -1,4 +1,4 @@
-import 'package:firebase_auth/firebase_auth.dart'; // [BARU] untuk cek status login
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'home_page.dart';
@@ -15,13 +15,12 @@ class _SplashPageState extends State<SplashPage> {
   @override
   void initState() {
     super.initState();
-    _goNext(); 
+    _goNext();
   }
 
   Future<void> _goNext() async {
-    // Tahan splash selama 2 detik
-    await Future.delayed(const Duration(seconds: 2));
-    if (!mounted) return; 
+    await Future.delayed(const Duration(seconds: 3));
+    if (!mounted) return;
 
     final user = FirebaseAuth.instance.currentUser;
 
@@ -38,7 +37,6 @@ class _SplashPageState extends State<SplashPage> {
     return Scaffold(
       body: Container(
         width: double.infinity,
-        // Gradient background biar tampilan lebih bagus
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [Color(0xFF3F51B5), Color(0xFF7986CB)],
@@ -46,22 +44,66 @@ class _SplashPageState extends State<SplashPage> {
             end: Alignment.bottomRight,
           ),
         ),
-        child: const Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.local_fire_department, size: 96, color: Colors.white),
-            SizedBox(height: 16),
-            Text(
-              'Firebase App',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-              ),
+        child: Center(
+          child: TweenAnimationBuilder<double>(
+            tween: Tween(begin: 0, end: 1),
+            duration: const Duration(milliseconds: 1200),
+            curve: Curves.easeOutBack,
+            builder: (context, value, child) {
+              return Opacity(
+                opacity: value.clamp(0.0, 1.0),
+                child: Transform.scale(scale: value, child: child),
+              );
+            },
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(24),
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: 20,
+                        offset: Offset(0, 8),
+                      ),
+                    ],
+                  ),
+                  child: const Icon(
+                    Icons.local_fire_department,
+                    size: 72,
+                    color: Colors.indigo,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                const Text(
+                  'Login - App',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1.5,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  'Firebase Authentication',
+                  style: TextStyle(color: Colors.white70, fontSize: 14),
+                ),
+                const SizedBox(height: 40),
+                const SizedBox(
+                  width: 28,
+                  height: 28,
+                  child: CircularProgressIndicator(
+                    color: Colors.white,
+                    strokeWidth: 3,
+                  ),
+                ),
+              ],
             ),
-            SizedBox(height: 24),
-            CircularProgressIndicator(color: Colors.white),
-          ],
+          ),
         ),
       ),
     );
