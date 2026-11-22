@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart'; // [BARU] untuk cek status login
 import 'package:flutter/material.dart';
 
-// import 'home_page.dart';
+import 'home_page.dart';
 import 'login_page.dart';
 
 class SplashPage extends StatefulWidget {
