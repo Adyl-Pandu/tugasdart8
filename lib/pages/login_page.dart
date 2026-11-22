@@ -1,4 +1,4 @@
-import 'package:firebase_auth/firebase_auth.dart'; // [BARU] package Firebase Authentication
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'home_page.dart';
@@ -17,72 +17,26 @@ class _MyLoginState extends State<MyLogin> {
   bool _isLoading = false;
   String? _error;
 
-  bool _obscure = true;
-
-  @override
-  void dispose() {
-    emailCtrl.dispose();
-    passCtrl.dispose();
-    super.dispose();
-  }
-
   Future<void> _login() async {
-    if (emailCtrl.text.trim().isEmpty || passCtrl.text.isEmpty) {
-      setState(() => _error = 'Email dan password wajib diisi');
-      return;
-    }
-
     setState(() {
       _isLoading = true;
       _error = null;
     });
 
     try {
-      final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: emailCtrl.text.trim(),
         password: passCtrl.text,
       );
-      final user = credential.user;
-
       if (!mounted) return;
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Login Success: ${user?.email}')),
-      );
-
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const HomePage()),
       );
     } on FirebaseAuthException catch (e) {
-      setState(() {
-        _error = _friendlyError(e);
-      });
-    } catch (e) {
-      setState(() {
-        _error = e.toString();
-      });
+      setState(() => _error = e.message);
     } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
-    }
-  }
-
-  String _friendlyError(FirebaseAuthException e) {
-    switch (e.code) {
-      case 'invalid-email':
-        return 'Format email tidak valid';
-      case 'user-not-found':
-      case 'wrong-password':
-      case 'invalid-credential':
-        return 'Email atau password salah';
-      case 'too-many-requests':
-        return 'Terlalu banyak percobaan, coba lagi nanti';
-      default:
-        return e.message ?? 'Terjadi kesalahan';
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -99,16 +53,15 @@ class _MyLoginState extends State<MyLogin> {
         ),
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
             child: Card(
-              elevation: 8,
+              margin: const EdgeInsets.all(24),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
               ),
-              child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 400),
+              child: SizedBox(
+                width: 340,
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -116,15 +69,13 @@ class _MyLoginState extends State<MyLogin> {
                           size: 56, color: Colors.indigo),
                       const SizedBox(height: 8),
                       const Text(
-                        'Login Firebase (Flutter)',
+                        'Login',
                         style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
+                            fontSize: 22, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 24),
-
                       TextField(
                         controller: emailCtrl,
-                        keyboardType: TextInputType.emailAddress,
                         decoration: const InputDecoration(
                           labelText: 'Email',
                           prefixIcon: Icon(Icons.email_outlined),
@@ -132,32 +83,21 @@ class _MyLoginState extends State<MyLogin> {
                         ),
                       ),
                       const SizedBox(height: 12),
-
                       TextField(
                         controller: passCtrl,
-                        obscureText: _obscure,
-                        decoration: InputDecoration(
+                        obscureText: true,
+                        decoration: const InputDecoration(
                           labelText: 'Password',
-                          prefixIcon: const Icon(Icons.lock_outlined),
-                          border: const OutlineInputBorder(),
-                          suffixIcon: IconButton(
-                            icon: Icon(_obscure
-                                ? Icons.visibility_off
-                                : Icons.visibility),
-                            onPressed: () =>
-                                setState(() => _obscure = !_obscure),
-                          ),
+                          prefixIcon: Icon(Icons.lock_outlined),
+                          border: OutlineInputBorder(),
                         ),
-                        onSubmitted: (_) => _login(), 
                       ),
                       const SizedBox(height: 16),
-
                       if (_error != null) ...[
                         Text(_error!,
                             style: const TextStyle(color: Colors.red)),
                         const SizedBox(height: 8),
                       ],
-
                       SizedBox(
                         width: double.infinity,
                         height: 48,
